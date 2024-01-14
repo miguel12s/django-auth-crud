@@ -42,7 +42,10 @@ def home(request):
 
 
 def signup(request):
-    if request.POST["password1"] == request.POST["password2"]:
+    if request.method=='GET':
+        return render(request, 'signup.html', {"form": UserCreationForm})
+    else:
+        if request.POST["password1"] == request.POST["password2"]:
             try:
                 user = User.objects.create_user(
                     request.POST["username"], password=request.POST["password1"])
@@ -51,8 +54,8 @@ def signup(request):
                 return redirect('tasks')
             except IntegrityError:
                 return render(request, 'signup.html', {"form": UserCreationForm, "error": "Username already exists."})
-
-    return render(request, 'signup.html', {"form": UserCreationForm, "error": "Passwords did not match."})
+        return render(request, 'signup.html', {"form": UserCreationForm, "error": "Passwords did not match."})
+   
     # if request.method == "POST":
     #     form = RegistroUserForm(request.POST)
     #     if form.is_valid():
@@ -63,9 +66,7 @@ def signup(request):
     #         login(request, user)
     #         messages.success(request, 'register finished')
     #         return redirect('home')
-    # else:
-    #     form = RegistroUserForm()
-    # return render(request, 'signup.html', {'form': form})
+    
 
 @login_required
 
